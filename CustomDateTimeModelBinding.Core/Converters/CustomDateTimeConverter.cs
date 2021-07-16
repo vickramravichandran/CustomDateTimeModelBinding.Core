@@ -11,10 +11,14 @@ namespace CustomDateTimeModelBinding.Core.Converters
         private readonly DateTimeConverterBase innerConverter = null;
 
         public CustomDateTimeConverter()
-            : this(dateFormat: null) { }
+            : this(dateFormat: null)
+        {
+        }
 
         public CustomDateTimeConverter(string dateFormat = null)
-            : this(dateFormat, innerConverter: new IsoDateTimeConverter()) { }
+            : this(dateFormat, innerConverter: new IsoDateTimeConverter())
+        {
+        }
 
         public CustomDateTimeConverter(string dateFormat = null, DateTimeConverterBase innerConverter = null)
         {
@@ -24,6 +28,11 @@ namespace CustomDateTimeModelBinding.Core.Converters
 
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
+            if (reader.TokenType == JsonToken.Date)
+            {
+                return reader.Value;
+            }
+
             var isNullableType = Helper.IsNullableType(objectType);
 
             if (reader.TokenType == JsonToken.Null)

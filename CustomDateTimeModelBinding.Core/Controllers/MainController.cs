@@ -11,18 +11,14 @@ namespace CustomDateTimeModelBinding.Core.Controllers
     {
         [Route("echo-date/{date}")]
         [HttpGet]
-        public DateTime? EchoDate(
-        [DateTimeModelBinder]
-        DateTime? date)
+        public DateTime? EchoDate([DateTimeModelBinder] DateTime? date)
         {
             return date;
         }
 
         [Route("echo-custom-date/{date}")]
         [HttpGet]
-        public DateTime? EchoCustomDateFormat(
-            [DateTimeModelBinder(DateFormat = "yyyyMMdd")]
-        DateTime? date)
+        public DateTime? EchoCustomDateFormat([DateTimeModelBinder(DateFormat = "yyyyMMdd")] DateTime? date)
         {
             return date;
         }

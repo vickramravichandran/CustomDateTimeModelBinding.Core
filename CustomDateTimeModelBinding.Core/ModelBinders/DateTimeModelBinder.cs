@@ -11,7 +11,7 @@ namespace CustomDateTimeModelBinding.Core.ModelBinders
     {
         public static readonly Type[] SUPPORTED_TYPES = new Type[] { typeof(DateTime), typeof(DateTime?) };
 
-        public Task BindModelAsync(ModelBindingContext bindingContext)
+        public async Task BindModelAsync(ModelBindingContext bindingContext)
         {
             if (bindingContext == null)
             {
@@ -20,7 +20,7 @@ namespace CustomDateTimeModelBinding.Core.ModelBinders
 
             if (!SUPPORTED_TYPES.Contains(bindingContext.ModelType))
             {
-                return Task.CompletedTask;
+                return;
             }
 
             var modelName = GetModelName(bindingContext);
@@ -28,23 +28,22 @@ namespace CustomDateTimeModelBinding.Core.ModelBinders
             var valueProviderResult = bindingContext.ValueProvider.GetValue(modelName);
             if (valueProviderResult == ValueProviderResult.None)
             {
-                return Task.CompletedTask;
+                return;
             }
 
             bindingContext.ModelState.SetModelValue(modelName, valueProviderResult);
 
             var dateToParse = valueProviderResult.FirstValue;
-
             if (string.IsNullOrEmpty(dateToParse))
             {
-                return Task.CompletedTask;
+                return;
             }
 
             var dateTime = ParseDate(bindingContext, dateToParse);
 
             bindingContext.Result = ModelBindingResult.Success(dateTime);
 
-            return Task.CompletedTask;
+            await Task.CompletedTask;
         }
 
         private DateTime? ParseDate(ModelBindingContext bindingContext, string dateToParse)
@@ -74,8 +73,7 @@ namespace CustomDateTimeModelBinding.Core.ModelBinders
                 })
                 .FirstOrDefault();
 
-            var ctrlParamDescriptor = paramDescriptor as ControllerParameterDescriptor;
-            if (ctrlParamDescriptor == null)
+            if (!(paramDescriptor is ControllerParameterDescriptor ctrlParamDescriptor))
             {
                 return null;
             }
